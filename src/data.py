@@ -2,27 +2,31 @@ import os
 import requests
 import zipfile
 import io
+import click
 import pandas as pd
 
 url = os.environ['SVEBOLLE_URL']
 path = 'data/raw'
 
+@click.command()
+@click.argument('url')
+@click.argument('path')
 def get_data(url=url, path=path, force_download=False, separator=';'):
     """Download and cache the Svebolle data
     
-    Parameters
-    ----------
-    path: string (optional)
-        location to save the data
-    url: string (optional)
-        web location of the data
-    force_download: bool (optional)
-        if True, force redownloading of data
+    Parameters\n
+    ----------\n
+    path: string (optional)\n
+        location to save the data\n
+    url: string (optional)\n
+        web location of the data\n
+    force_download: bool (optional)\n
+        if True, force redownloading of data\n
 
-    Returns
-    -------
-    data: pandas.DataFrame
-        the Svebolle deployment measurement dataset
+    Returns\n
+    -------\n
+    data: pandas.DataFrame\n
+        the Svebolle deployment measurement dataset\n
     """
     if force_download or not os.path.exists(os.path.join(path, 'LORA_data.csv')):
         r = requests.get(url)
