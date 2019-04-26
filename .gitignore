@@ -107,3 +107,9 @@ venv.bak/
 src/data/raw/*.csv
 src/data/externals/*.csv
 src/data/processed/*.csv
+src/data/raw/*.m
+src/data/externals/*.m
+src/data/processed/*.m
+src/data/raw/*.txt
+src/data/externals/*.txt
+src/data/processed/*.txt
