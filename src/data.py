@@ -4,7 +4,7 @@ import zipfile
 import io
 import pandas as pd
 
-url = 'https://www.dropbox.com/sh/yramhj65py4tsr6/AABhfGJGIagJYpCuxtVzWj_Ua?dl=1'
+url = os.environ['SVEBOLLE_URL']
 path = 'data/raw'
 
 def get_data(url=url, path=path, force_download=False, separator=';'):

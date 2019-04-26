@@ -104,4 +104,4 @@ venv.bak/
 .mypy_cache/
 
 # exclude data from source control
-src/data/
+src/data/raw/
