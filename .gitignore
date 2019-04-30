@@ -104,12 +104,9 @@ venv.bak/
 .mypy_cache/
 
 # exclude data from source control
-src/data/raw/*.csv
-src/data/externals/*.csv
-src/data/processed/*.csv
-src/data/raw/*.m
-src/data/externals/*.m
-src/data/processed/*.m
-src/data/raw/*.txt
-src/data/externals/*.txt
-src/data/processed/*.txt
+data/raw/*.csv
+data/externals/*.csv
+data/processed/*.csv
+data/raw/*.m
+data/externals/*.m
+data/processed/*.m
