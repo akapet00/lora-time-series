@@ -43,6 +43,14 @@ def main():
     model = Model()
     model.build_model(configs)
 
+    model.train(
+		X_train,
+	    y_train,
+		epochs = configs['training']['epochs'],
+		batch_size = configs['training']['batch_size'],
+		save_dir = configs['model']['save_dir']
+	)
+
     # predict
     y_train_pred = model.predict(X_train)
     y_test_pred = model.predict(X_test)
