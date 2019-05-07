@@ -31,9 +31,9 @@ def estimate_prob(data, window_size):
         window_prob.append(ones_freq/window_size)
     return 1 - window_prob.count(0.0)/len(window_prob)
 
-def plot_data(data, time=range(24)):
+def plot_data(data):
     fig = plt.figure(facecolor='white', figsize=(12,3))
-    plt.plot(time, data, 'b-.o')
+    plt.plot(range(len(data)), data, 'b-.o')
     plt.show()
 
 def plot_prob(probs, time_points):
@@ -43,7 +43,7 @@ def plot_prob(probs, time_points):
 def main():
     data = [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0]
-    # plot_data(data)
+    plot_data(data)
 
     _ = sampling(data, sample_size=10)
 
