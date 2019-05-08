@@ -10,6 +10,7 @@ dependencies:
   - jupyter
   - requests
   - click
+  - scipy
   - pip:
     - watermark
     - pytest
