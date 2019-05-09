@@ -34,10 +34,14 @@ def estimate_prob(data, window_size):
 def plot_data(data):
     fig = plt.figure(facecolor='white', figsize=(12,3))
     plt.plot(range(len(data)), data, 'b-.o')
+    plt.xlabel('time [s]')
+    plt.ylabel('Activation')
     plt.show()
 
 def plot_prob(probs, time_points):
     plt.plot(range(1, time_points), probs)
+    plt.xlabel('time [s]')
+    plt.ylabel('probability')
     plt.show()
 
 def main():
