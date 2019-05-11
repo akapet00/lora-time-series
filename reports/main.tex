@@ -48,7 +48,7 @@ TBA
 
 LoRaWAN - Long Range Wide Area Network - low power, wide area media access protocol designed to wirelessly connect 'things' to the internet. LoRaWAN is useful in IoT deployment, specially in smart environments where there are thousands of end-devices (i.e. sensors) that require minimal bandwidth and minimal energy.
 
-The network architecutre is deployed in a star-of-stars topology in which gateways relay messages between end-devices and a central network server. \cite{Silva_LoRaWAN}
+The network architecutre is deployed in a star-of-stars topology in which gateways relay messages between end-devices and a central network server \cite{Silva_LoRaWAN}.
 Toplogy overview is shown in Fig. \ref{lorawan}.
 \begin{figure}
 	\includegraphics[width=\linewidth]{images/LoRaWAN-Network-Layout.png} % Figure image
@@ -57,11 +57,11 @@ Toplogy overview is shown in Fig. \ref{lorawan}.
 \end{figure}
 
 
-End-device is transmitting data to base-station using LoRa technolgy, which means that data is modulated using CSS technique and transmitted using ~868MHz RF, also it is worth mentioning that data is encrypted using AES128 in Counter mode (CTR). If the packet’s FPort is set to 0 then the NwkSKey is used, otherwise the AppSKey is used. An important feature of all messages in LoRa is that the counters for sent (FCntUp) and received (FCntDown) messages are maintained by the Node and Network Server, and that these counters never repeat. \cite{Miller_LoRaSecurity}
-Base-stations relay messages from end-nodes to network server using a back-haul wireless network with higher frequency, often 2.4GHz, or using wired connection (Ethernet, optics). 
-Network server decodes the packets received from base-station and performs security checks and adaptive data rate so it can generate the packets that should be sent back to end-devices. \cite{Silva_LoRaWAN}
+End-device is transmitting data to base station using LoRa technology, which means that data is modulated using CSS technique and transmitted using 868MHz RF, also it is worth mentioning that data is encrypted using AES128 in Counter mode (CTR). If the packet’s FPort is set to 0 then the NwkSKey is used, otherwise the AppSKey is used. An important feature of all messages in LoRa is that the counters for sent (FCntUp) and received (FCntDown) messages are maintained by the Node and Network Server, and that these counters never repeat \cite{Miller_LoRaSecurity}.
+base stations relay messages from end-nodes to network server using a back-haul wireless network with higher frequency (often 2.4GHz) or using wired connection (Ethernet, optics). 
+Network server decodes the packets received from base station and performs security checks and adaptive data rate so it can generate the packets that should be sent back to end-devices \cite{Silva_LoRaWAN}.
 
-LoRaWAN network model deployed in Svebølle consisted of a single base station which communicates with few hundreds of different end-devices; network topology is quite simple and shown on Fig. \ref{svebolle}
+Observed LoRaWAN network model deployed in Svebølle is consisted of a single base station which communicates with few hundreds of different end-devices; network topology is quite simple and shown on Fig. \ref{svebolle}.
 \begin{figure}
 	\centering
 	\includegraphics[scale=.7]{images/Svebolle-Topology.png} % Figure image
@@ -69,84 +69,83 @@ LoRaWAN network model deployed in Svebølle consisted of a single base station w
 	\label{svebolle} 
 \end{figure}
 
-Data was collected during the period of 4 months and 14 days; during that period approximately 689 thousands measurements were generated and captured. 
-There is only one base-station, and, judgdin by the exploration of the dataset 251 end-device in the network.
-Measurements were carried out on the base-station side and there are more than few relevant labels:
+Data was collected during the period of 4 months and 14 days, during which approximately 689 thousands measurements were generated and captured. 
+There is only one base station and, judgdin by the exploration of the data set, 251 end-devices in the network.
+Measurements were carried out on the base station side and there are more than few relevant labels:
 \begin{itemize}
-	\item Time - basic datetime format to microsecond precision (might want to treat this data as time series)
-    \item DevAddr - device address written as HEX string (easily can be converted to binary if needed)
-    \item Freq - radio frequancy (in MHz) of signals that carry information
-    \item Chan - channel
-    \item BW - bandwidth (in kHz)
+	\item Time - basic datetime format to microsecond precision
+    \item DevAddr - device address written as HEX string
+    \item Freq - carrier signal radio frequency
+    \item Chan - channel number
+    \item BW - bandwidth
     \item SPF - spreading factor
     \item RSSI - received signal strength indication
-    \item SNR - signal-to-noise ratio
+    \item SNR - Signal-to-Noise ratio
     \item CR - code rate 
     \item DR - data rate
-    \item crcStatus - is there an error in transmission
+    \item crcStatus - cyclic redundancy check
     \item mType - type of MAC message
     \item macPayload - part of transmitted data that is the actual intended message
-    \item id - identification of package
+    \item id - packet identification
 \end{itemize}
 
 All of these indicators are described in details in \cite{Aloys_LoRa}.
 
-Considering the data simple communication model of this LoRaWAN network could be deduced, Fig. \ref{communication}
+Considering the data, simple communication model of this LoRaWAN network could be deduced and is shown in Fig. \ref{communication}
 \begin{figure}
 	\centering
 	\includegraphics[scale=.5]{images/Svebolle-ed-bs-model.png} % Figure image
-	\caption{Communication between end-device and base-station in LoRaWAN network in Svebølle} % Figure caption
+	\caption{Communication between end-device and base station in LoRaWAN network in Svebølle} % Figure caption
 	\label{communication} 
 \end{figure}
 
 \section{Introducing the Idea of ANN}
 
 Measurements in data set were not structured as time-series data, only times when transmission of LoRa message actually happend in uplink direction are captured and stored. 
-Time series data is a series of data points indexed in time order and taken at successive equally spaced points in time. A time series is generally described through parameters such as trend, seasonality, irregularity and cyclicallity. \cite{Adhikari_timeseries}
+Time series data is a series of data points indexed in time order and taken at successive equally spaced points in time. A time series is generally described through parameters such as trend, seasonality, irregularity and cyclicallity \cite{Adhikari_timeseries}.
 
 In order to create time series data, the only important label is wheter the end-device has successfully transmitted the message to the gateway or not. 
 For each time point (second-precision) there is activity flag assigned. If the device was active for observed time point, activity flag is 1 otherwise activity flag is 0.
-Since the measurements were carried out through almost 5 month period, newly created dataset was huge and as such perfect candidate for applying deep learning methods to perform forecasting of future time points.
+Since the measurements were carried out through almost 5 month period, newly created data set was huge and as such perfect candidate for applying deep learning methods to perform forecasting of future time points.
 
-Artificial Neural Networks, or ANN for short, are modeling the intelligence of human brain - recognize regularities and patterns of the given data, learning from past experience and providing inference on the output. \cite{Adhikari_timeseries}
-Why are the ANN such good predictors for time series type of data? There are couple of reasons:
+Artificial Neural Networks, or ANN for short, are modeling the intelligence of human brain: recognizing regularities and patterns of the given data, learning from past experience and providing inference on the output \cite{Adhikari_timeseries}.
+Why are ANNs such good predictors for time series type of data? There are couple of reasons:
 \begin{description}
-	\item[Data-driven and self-adaptive] There is no need to make \emph{a priori} assumption about statistaical distribution of the data before feeding ANN with the data. \cite{Adhikari_timeseries}
-	\item [Non-linearity] ANNs are perfect for modeling data with non-obvious patterns. \cite{Zhang_ann}
-	\item [Universal functional approximators] Any contionous function can be approximated to any accuracy. \cite{Hornik_ann}
+	\item[Data-driven and self-adaptive] There is no need to make \emph{a priori} assumption about statistaical distribution of the data before feeding ANN with the data \cite{Adhikari_timeseries}.
+	\item [Non-linearity] ANNs are perfect for modeling data with non-obvious patterns \cite{Zhang_ann}.
+	\item [Universal functional approximators] Any contionous function can be approximated to any accuracy \cite{Hornik_ann}.
 \end{description}
 
-Even though vanilla ANNs are very powerful tool to create predictions based on historical events they lack persistence. 
-Recurrent neural networks (RNNs) are trying to solve this problems implementing loops and allowing information to persist., Fig. \ref{rnn}. RNN looks at the input $ x_{t} $ and outputs a value $ h_{t} $, a loop allows information to be passed from one step of the network to the next. 
+Even though vanilla ANNs are very powerful tool to create predictions based on historical events, they lack persistence. 
+Recurrent Neural Networks (RNNs) are trying to solve this problem implementing loops and allowing information to persist, overview of RNN is shown in Fig. \ref{rnn}. RNN looks at the input $ x_{t} $ and outputs a value $ h_{t} $, a loop allows information to be passed from one step of the network to the next. 
 \begin{figure}
 	\centering
 	\includegraphics[scale=.5]{images/RNN.png} % Figure image
 	\caption{RNN simple overview - feedback provides that the ouput (or a hidden layer) of the network, together with the new input at the current timestamp, is taken as input}
 	\label{rnn} 
 \end{figure}
-
-Unpacked RNNs have the form of a chain of repeating nodes defined by very simple structure, Fig. \ref{}. \cite{Olah_lstm}
+Unpacked RNNs have the form of a chain of repeating nodes defined by very simple structure, Fig. \ref{rnn-unpacked} \cite{Olah_lstm}.
 \begin{figure}
 	\centering
 	\includegraphics[scale=.5]{images/RNN-unpacked.png} % Figure image
 	\caption{RNN are formed in a chain-like nature what makes them applicable for predicting future events of sequence data}
-	\label{rnn} 
+	\label{rnn-unpacked} 
 \end{figure}
 
 RNNs are using gradient descent (first-order iterative optimization algorithm, usually used for finding the minimum of a function) as a way to minimize the error caused by changing each weight in proportion the derivative of the error with respect to that weight. Problem with this approach is error gradient vanishing which is causing the RNN to become unable to learn to connect the information if the relevant data is devided by large gap. 
-The problem of Long-Term Dependencies is solved by applying Long Short-Term Memory network, LSTM for short, which are introduced by the Sepp Hochreiter and his team in 1997. in the \cite{Hochreiter_LSTM}. They proposed a model that is capable of remembering relevant information for long period of time and avoid the long-term dependeny issues. 
+The problem of long-term dependencies is solved by applying Long Short-Term Memory network, LSTM for short, which are introduced by the Sepp Hochreiter and his team in 1997. in the \cite{Hochreiter_LSTM}. They proposed a model that is capable of remembering relevant information for long period of time and avoiding the long-term dependency issues. 
 
 \section{Proposed LSTM model}
 
-Just like the RNN, LSTM architecture is also formed as chain structure. Difference is that every cell has four in-layers each performing specific operations on input data and interacting with others in a special way, general overview of LSTM network is shown on Fig. \ref{lstm}.
+Just like the RNN, LSTM architecture is also formed as a chain structure. Difference is that every cell has four in-layers each performing specific operations on input data and interacting with others in a special way, general overview of LSTM network is shown on Fig. \ref{lstm}.
 \begin{figure}
 	\centering
-	\includegraphics[scale=.5]{images/LSTM.png} % Figure image
+	\includegraphics[scale=.4]{images/LSTM.png} % Figure image
 	\caption{LSTM network preview}
 	\label{lstm} 
 \end{figure}
 
-An LSTM cell is consisted of 5 components which allow it to model both long-term and short-term data.
+An LSTM cell is consisted of 5 components which allow it to model both long-term and short-term data:
 \begin{itemize}
 	\item cell state
 	\item hidden state
@@ -155,13 +154,13 @@ An LSTM cell is consisted of 5 components which allow it to model both long-term
 	\item output gate 
 \end{itemize}
 
-Cell state, presented with the upper horizontal line in the Fig. \ref{lstm}, runs through the whole and is affected by some minor linear changes.
+Cell state, presented with the upper horizontal line in Fig. \ref{lstm}, runs through the whole cell and is affected by some minor linear changes.
 
 Gates are the mechanism that allows information to be passed in selective fashion from the LSTM to the cell state. They consist of a sigmoid layer, which outputs value between 0 and 1 describing value of each component, and a multiplication operation.
 There are three types of gates in LSTM network:
 \begin{itemize}
 	\item {Forget gate} - determines which information to remove from the cell state $$ f_{t} = \sigma (W_{f} \cdot [h_{t-1}, x_{t}] + b_{f}) $$
-	\item {The second gate} - decides which new information shoul be written to the cell state. First, the sigmoid function decides which values to update and then the \emph{tanh} layer creates a vector of candidates to be added to the cell state. $$ i_{t} = \sigma (W_{i} \cdot [h_{t-1}, x_{t}] + b_{i}) $$ $$ C_{t} = tanh (W_{C} \cdot [h_{t-1}, x_{t}] + b_{C}) $$
+	\item {The second gate} - decides which new information should be written to the cell state. First, the sigmoid function decides which values to update and then the \emph{tanh} layer creates a vector of candidates to be added to the cell state. $$ i_{t} = \sigma (W_{i} \cdot [h_{t-1}, x_{t}] + b_{i}) $$ $$ C_{t} = tanh (W_{C} \cdot [h_{t-1}, x_{t}] + b_{C}) $$
 	\item {The output gate} - decides what is going to be output of the concrete cell. The output is based on the filtered version of the cell state. $$ o_{t} = \theta (W_{o} [h_{t-1}, x_{t}] + b_{o}) $$ $$ h_{t} = o_{t} * tanh(C_{t})$$
 \end{itemize}
 %----------------------------------------------------------------------------------------
