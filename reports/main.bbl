@@ -201,15 +201,15 @@
          given={Maxwell},
          giveni={M\bibinitperiod},
       }}%
-      {{hash=sH}{%
-         family={sWhite},
-         familyi={s\bibinitperiod},
+      {{hash=WH}{%
+         family={White},
+         familyi={W\bibinitperiod},
          given={Halbert},
          giveni={H\bibinitperiod},
       }}%
     }
-    \strng{namehash}{HKSMsH1}
-    \strng{fullhash}{HKSMsH1}
+    \strng{namehash}{HKSMWH1}
+    \strng{fullhash}{HKSMWH1}
     \field{labelnamesource}{author}
     \field{labeltitlesource}{title}
     \field{sortinit}{H}
@@ -259,7 +259,7 @@
     \field{title}{Understanding LSTM Networks}
     \field{journaltitle}{colah{'}s blog}
     \field{month}{08}
-    \field{year}{215}
+    \field{year}{2015}
   \endentry
 
   \entry{Zhang_ann}{article}{}
