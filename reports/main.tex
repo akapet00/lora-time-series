@@ -58,7 +58,7 @@ Toplogy overview is shown in Fig. \ref{lorawan}.
 
 
 End-device is transmitting data to base station using LoRa technology, which means that data is modulated using CSS technique and transmitted using 868MHz RF, also it is worth mentioning that data is encrypted using AES128 in Counter mode (CTR). If the packet’s FPort is set to 0 then the NwkSKey is used, otherwise the AppSKey is used. An important feature of all messages in LoRa is that the counters for sent (FCntUp) and received (FCntDown) messages are maintained by the Node and Network Server, and that these counters never repeat \cite{Miller_LoRaSecurity}.
-base stations relay messages from end-nodes to network server using a back-haul wireless network with higher frequency (often 2.4GHz) or using wired connection (Ethernet, optics). 
+Base stations relay messages from end-nodes to network server using a back-haul wireless network with higher frequency (often 2.4GHz) or using wired connection (Ethernet, optics). 
 Network server decodes the packets received from base station and performs security checks and adaptive data rate so it can generate the packets that should be sent back to end-devices \cite{Silva_LoRaWAN}.
 
 Observed LoRaWAN network model deployed in Svebølle is consisted of a single base station which communicates with few hundreds of different end-devices; network topology is quite simple and shown on Fig. \ref{svebolle}.
@@ -199,7 +199,7 @@ Estimation of successful transmission of the message for specific LoRa device fo
 	\item The same process is applied on the next $ t $ seconds in subsample where next $ t $ seconds represent time window moved by 1 second in the direction of x-axis.
 	\item When the count for the whole sample is finished, we divide the number of device activations and number of seconds of sample $ s $. 
 	\item Lastly, probability estimation (if the time invariance is assumed) is avereged value from samples for the specific window size.
-	\item In addition, final result can be represented as quality of LSTM model times probability estimate: $ \mathbb{P}_{t} = RMSE \times \mathbb{P}[N_{t} = k | X_{s}] $ 
+	\item In addition, final result can be represented as quality of LSTM model times probability estimate: $ \mathbb{P}_{t} = (1-RMSE) \times \mathbb{P}[N_{t} = k | X_{s}] $ 
 \end{itemize} 
 As window size (number of seconds for which we want to estimate probability of activation) rises so does the probability of activation. Finally, for the window size equals to sample size, probability should be 1 in most cases. 
 Probability distribution is shown on Fig. \ref{est-prob}.
