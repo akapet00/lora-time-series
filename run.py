@@ -18,6 +18,9 @@ def main():
 
     df = pd.read_csv(os.path.join(PROJ_ROOT, DATASET_PATH, 'LORA_data.csv'), header=0, sep=';')
 
+    configs = json.load(open('configs.json', 'r'))
+    if not os.path.exists(configs['model']['save_dir']): os.makedirs(configs['model']['save_dir'])
+
     data = df.copy()
     data = get_features(data)
     data = clean_features(data)
@@ -33,13 +36,11 @@ def main():
     df = pd.read_csv(os.path.join(PROJ_ROOT, PROCESSED_PATH, 'single_device_activation.csv'),
                     header=0, sep=',')
 
-    X, y = timeDelay(df.Active.values, delay=5)
+    X, y = timeDelay(df[:1000000].Active.values, delay=100)
+
     X_train, y_train, X_test, y_test = split(X, y, ratio=0.8)
 
     # instantiating a lstm model
-    configs = json.load(open('configs.json', 'r'))
-    if not os.path.exists(configs['model']['save_dir']): os.makedirs(configs['model']['save_dir'])
-
     model = Model()
     model.build_model(configs)
 
@@ -50,15 +51,6 @@ def main():
 		batch_size = configs['training']['batch_size'],
 		save_dir = configs['model']['save_dir']
 	)
-
-    # predict
-    y_train_pred = model.predict(X_train)
-    y_test_pred = model.predict(X_test)
-
-    trainScore = model.evaluate(X_train, y_train)
-    print('Train Score: %.2f MSE (%.2f RMSE)' % (trainScore, math.sqrt(trainScore)))
-    testScore = model.evaluate(X_test, y_test)
-    print('Test Score: %.2f MSE (%.2f RMSE)' % (testScore, math.sqrt(testScore)))
 
 if __name__ == '__main__':
     main()

@@ -1,7 +1,7 @@
 {
 	"training": {
-		"epochs": 1,
-		"batch_size": 32
+		"epochs": 10,
+		"batch_size": 64
 	},
 	"model": {
 		"loss": "mse",
@@ -10,8 +10,8 @@
 		"layers": [
 			{
 				"type": "lstm",
-				"neurons": 10,
-				"input_timesteps": 5,
+				"neurons": 128,
+				"input_timesteps": 100,
 				"input_dim": 1,
 				"return_seq": true
 			},
@@ -20,13 +20,23 @@
 				"rate": 0.2
 			},
 			{
-				"type": "lstm",
-				"neurons": 10,
-				"return_seq": true
+				"type": "BatchNormalization"
 			},
 			{
 				"type": "lstm",
-				"neurons": 10,
+				"neurons": 128,
+				"return_seq": true
+			},
+			{
+				"type": "dropout",
+				"rate": 0.2
+			},
+			{
+				"type": "BatchNormalization"
+			},
+			{
+				"type": "lstm",
+				"neurons": 128,
 				"return_seq": false
 			},
 			{
@@ -36,8 +46,11 @@
 			{
 				"type": "dense",
 				"neurons": 1,
-				"activation": "linear"
+				"activation": "relu"
 			}
 		]
+	},
+	"predictions":{
+		"sequence_len":100
 	}
 }

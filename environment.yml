@@ -6,6 +6,7 @@ dependencies:
   - seaborn
   - scikit-learn
   - tensorflow
+  - tensorflow-gpu
   - keras
   - jupyter
   - requests
