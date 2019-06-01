@@ -43,36 +43,54 @@ class Model():
                            optimizer=configs['model']['optimizer'],
                            metrics=['accuracy'])
 
-        print('[Model] Model Compiled')
+        print('MODEL Compiled')
         timer.stop()   
 
-    def train(self, X, y, epochs, batch_size, save_dir):
+    def train(self, X, y, epochs, batch_size, save_dir, logs):
         timer = Timer() 
         timer.start()
-        print('[Model] Training Started')
-        print('[Model] %s epochs, %s batch size'% (epochs, batch_size))
+        print('MODEL Training Started')
+        print(f'MODEL {epochs} epochs, {batch_size} batch size')
 
-        save_fname = os.path.join(save_dir, '%s-e%s.h5' % (dt.datetime.now().strftime('%d%m%Y-%H%M%S'), str(epochs)))
+        save_fname = os.path.join(save_dir, f'{dt.datetime.now().strftime("%d%m%Y-%H%M%S")}-e{epochs}.h5')
 
         callbacks = [
 			EarlyStopping(monitor='val_loss', patience=2),
 			ModelCheckpoint(filepath=save_fname, monitor='val_loss', save_best_only=True),
-            #TensorBoard(log_dir=f"/logs/{epochs}-epochs-{dt.datetime.now().strftime('%d%m%Y-%H%M%S')}")
+            TensorBoard(log_dir=f'{logs}/{dt.datetime.now().strftime("%d%m%Y-%H%M%S")}-e{epochs}')
         ]  
 
-        self.model.fit(X, y, epochs=epochs, batch_size=batch_size, callbacks=callbacks, verbose=2, shuffle=False)
+        self.model.fit(X, y, epochs=epochs, batch_size=batch_size, callbacks=callbacks, shuffle=False)
         self.model.save(save_fname)
+
+        print(f'MODEL Training Completed. Model saved as {save_fname}')
+        timer.stop()
+
+    def train_generator(self, data_gen, epochs, batch_size, steps_per_epoch, save_dir):
+        timer = Timer()
+        timer.start()
+        print('MODEL Out-of-Memory Training Started')
+        print(f'MODEL {epochs} epochs, {batch_size} batch size, {steps_per_epoch} batches per epoch')
+        
+        save_fname = os.path.join(save_dir, '%s-e%s.h5' % (dt.datetime.now().strftime('%d%m%Y-%H%M%S'), str(epochs)))
+        
+        callbacks = [
+			ModelCheckpoint(filepath=save_fname, monitor='loss', save_best_only=True)
+		]
+        
+        self.model.fit_generator(data_gen, steps_per_epoch=steps_per_epoch, epochs=epochs, callbacks=callbacks, workers=1)
+        
+        print(f'MODEL Out-of-Memory Training Completed. Model saved as {save_fname}')
         timer.stop()
     
     def predict(self, x):
-        print('[Model] Predicting Point-by-Point...')
+        print('MODEL Predicting Point-by-Point:')
         predicted = self.model.predict(x)
         predicted = np.reshape(predicted, (predicted.size,))
         return predicted
     
     def predict_sequences_multiple(self, data, window_size, prediction_len):
-		# Predict sequence of 50 steps before shifting prediction run forward by 50 steps
-        print('[Model] Predicting Sequences Multiple...')
+        print('MODEL Predicting Sequences Multiple:')
         prediction_seqs = []
         for i in range(int(len(data)/prediction_len)):
             curr_frame = data[i*prediction_len]
