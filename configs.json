@@ -7,11 +7,12 @@
 		"loss": "mse",
 		"optimizer": "adam",
 		"save_dir": "saved_models",
+		"logs": "logs",
 		"layers": [
 			{
 				"type": "lstm",
 				"neurons": 128,
-				"input_timesteps": 100,
+				"input_timesteps": 5,
 				"input_dim": 1,
 				"return_seq": true
 			},
@@ -36,7 +37,7 @@
 			},
 			{
 				"type": "lstm",
-				"neurons": 128,
+				"neurons": 10,
 				"return_seq": false
 			},
 			{
@@ -46,7 +47,7 @@
 			{
 				"type": "dense",
 				"neurons": 1,
-				"activation": "relu"
+				"activation": "linear"
 			}
 		]
 	},
