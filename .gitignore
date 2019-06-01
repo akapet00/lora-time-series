@@ -110,3 +110,6 @@ data/processed/*.csv
 data/raw/*.m
 data/externals/*.m
 data/processed/*.m
+
+# numpy stuff
+*.npy
