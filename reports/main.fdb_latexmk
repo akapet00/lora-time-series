@@ -1,18 +1,18 @@
 # Fdb version 3
-["bibtex main"] 1557952162 "main.aux" "main.bbl" "main" 1557952206
+["bibtex main"] 1559131951 "main.aux" "main.bbl" "main" 1559132090
   "/usr/share/texlive/texmf-dist/bibtex/bst/biblatex/biblatex.bst" 1510525977 63137 1eef042be76fa9262fed2413ad573404 ""
   "bibl.bib" 1557752867 3521 d06d0826fa175002b011d0ce267afaa9 ""
-  "main-blx.bib" 1557952205 306 8aaf130409042efa77015fcb01433692 ""
-  "main.aux" 1557952205 4793 5efe9527978c3df5b105744119cae41e ""
+  "main-blx.bib" 1559131951 306 8aaf130409042efa77015fcb01433692 ""
+  "main.aux" 1559131952 4962 5c743e6c68e14bfb6287056a794d5ba4 ""
   "main.bcf" 0 -1 0 ""
   (generated)
   "main.bbl"
   "main.blg"
-["pdflatex"] 1557952204 "/home/alk/Github/lora-time-series/reports/main.tex" "/home/alk/Github/lora-time-series/reports/main.pdf" "main" 1557952206
+["pdflatex"] 1559131951 "/home/alk/Github/lora-time-series/reports/main.tex" "/home/alk/Github/lora-time-series/reports/main.pdf" "main" 1559132090
   "/etc/texmf/web2c/texmf.cnf" 1549798950 475 c0e671620eb5563b2130f56340a5fde8 ""
   "/home/alk/.texlive2017/texmf-var/fonts/pk/ljfour/public/bbm/bbm10.657pk" 1557751972 7808 69d08459a22667a8899acbe9a3cdbfaa ""
-  "/home/alk/Github/lora-time-series/reports/main.aux" 1557952205 4793 5efe9527978c3df5b105744119cae41e ""
-  "/home/alk/Github/lora-time-series/reports/main.tex" 1557952204 16364 6169d12225f0df2c4bf286b968466f23 ""
+  "/home/alk/Github/lora-time-series/reports/main.aux" 1559131952 4962 5c743e6c68e14bfb6287056a794d5ba4 ""
+  "/home/alk/Github/lora-time-series/reports/main.tex" 1559132089 17616 a779e95f9c5101dfe152d55fbfe61a70 ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc" 1480098666 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/xcharter/xch_q7u3cc.enc" 1509663637 3608 d4b77c790f9471e158b945b7021f3f80 ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/xcharter/xch_tuu2ww.enc" 1509663637 3152 ae295da8277f5437c43ccc413c3e78ec ""
@@ -190,16 +190,16 @@
   "images/Svebolle-ed-bs-model.png" 1557752867 61326 8faa18e3c00e634708b8c9b69807c1b3 ""
   "images/est-prob.png" 1557752867 16493 88eb14034967028ce3b1b9f7b026780f ""
   "images/lstm-out.png" 1557752867 9019 d3969df7ce4b4d788b66c1000698a031 ""
-  "main.aux" 1557952205 4793 5efe9527978c3df5b105744119cae41e ""
-  "main.bbl" 1557952162 9363 a3c378bd27044df859baf591e8c0c41d "bibtex main"
-  "main.run.xml" 1557952205 2550 67af2c5bfe7dd96436bd7809f72d3b22 ""
-  "main.tex" 1557952204 16364 6169d12225f0df2c4bf286b968466f23 ""
+  "main.aux" 1559131952 4962 5c743e6c68e14bfb6287056a794d5ba4 ""
+  "main.bbl" 1559131951 9363 a3c378bd27044df859baf591e8c0c41d "bibtex main"
+  "main.run.xml" 1559131952 2550 67af2c5bfe7dd96436bd7809f72d3b22 ""
+  "main.tex" 1559132089 17616 a779e95f9c5101dfe152d55fbfe61a70 ""
   "structure.tex" 1557952196 5816 094321e279aea1b6cc399a3775765e8e ""
   (generated)
-  "main.aux"
-  "main.run.xml"
   "main.pdf"
-  "/home/alk/Github/lora-time-series/reports/main.pdf"
   "main.log"
   "main-blx.bib"
+  "/home/alk/Github/lora-time-series/reports/main.pdf"
+  "main.aux"
+  "main.run.xml"
   "/home/alk/Github/lora-time-series/reports/main.log"

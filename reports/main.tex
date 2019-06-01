@@ -46,7 +46,7 @@ TBA
 
 \section{Network Topology}
 
-LoRaWAN - Long Range Wide Area Network - low power, wide area media access protocol designed to wirelessly connect 'things' to the internet. LoRaWAN is useful in IoT deployment, specially in smart environments where there are thousands of end-devices (i.e. sensors) that require minimal bandwidth and minimal energy.
+LoRaWAN - Long Range Wide Area Network - low power, wide area media access protocol designed to wirelessly connect 'things' to the internet. LoRaWAN is useful in IoT deployment, specially in smart environments where there are thousands of end-devices (i.e. sensors) that require minimal bandwidth and low power consumption.
 
 The network architecutre is deployed in a star-of-stars topology in which gateways relay messages between end-devices and a central network server \cite{Silva_LoRaWAN}.
 Toplogy overview is shown in Fig. \ref{lorawan}.
@@ -70,8 +70,8 @@ Observed LoRaWAN network model deployed in Svebølle is consisted of a single ba
 \end{figure}
 
 Data was collected during the period of 4 months and 14 days, during which approximately 689 thousands measurements were generated and captured. 
-There is only one base station and, judgdin by the exploration of the data set, 251 end-devices in the network.
-Measurements were carried out on the base station side and there are more than few relevant labels:
+There is only one base station and, judgding by the exploration of the data set, 251 end-devices in the network.
+Measurements were carried out on the base station side, which forwards data to network server, shown in Fig. \ref{svebolle}. There are more than few relevant measured features:
 \begin{itemize}
 	\item Time - basic datetime format to microsecond precision
     \item DevAddr - device address written as HEX string
@@ -99,13 +99,13 @@ Considering the data, simple communication model of this LoRaWAN network could b
 	\label{communication} 
 \end{figure}
 
-\section{Introducing the Idea of ANN}
+\section{Introducing ANN}
 
-Measurements in data set were not structured as time-series data, only times when transmission of LoRa message actually happend in uplink direction are captured and stored. 
+Measurements in data set were not structured as time-series data, only times when transmission of LoRa message was successful in uplink direction are captured and stored. 
 Time series data is a series of data points indexed in time order and taken at successive equally spaced points in time. A time series is generally described through parameters such as trend, seasonality, irregularity and cyclicallity \cite{Adhikari_timeseries}.
 
 In order to create time series data, the only important label is wheter the end-device has successfully transmitted the message to the gateway or not. 
-For each time point (second-precision) there is activity flag assigned. If the device was active for observed time point, activity flag is 1 otherwise activity flag is 0.
+For each time point, where every time point is observation in seconds, there is activity flag assigned. If the device was active for observed time point, activity flag is 1 otherwise activity flag is 0.
 Since the measurements were carried out through almost 5 month period, newly created data set was huge and as such perfect candidate for applying deep learning methods to perform forecasting of future time points.
 
 Artificial Neural Networks, or ANN for short, are modeling the intelligence of human brain: recognizing regularities and patterns of the given data, learning from past experience and providing inference on the output \cite{Adhikari_timeseries}.
@@ -133,6 +133,7 @@ Unpacked RNNs have the form of a chain of repeating nodes defined by very simple
 \end{figure}
 
 RNNs are using gradient descent (first-order iterative optimization algorithm, usually used for finding the minimum of a function) as a way to minimize the error caused by changing each weight in proportion the derivative of the error with respect to that weight. Problem with this approach is error gradient vanishing which is causing the RNN to become unable to learn to connect the information if the relevant data is devided by large gap. 
+Vanishng gradients problem happens when the leading eigenvalue of the weight matrix becomes too small. This sitation can lead to gradient signal becoming so small that learning becomes extremely slow and, eventually, stops working. 
 The problem of long-term dependencies is solved by applying Long Short-Term Memory network, LSTM for short, which are introduced by the Sepp Hochreiter and Jurgen Schmidhuber in 1997. in the \cite{Hochreiter_LSTM}. They proposed a model that is capable of remembering relevant information for long period of time and avoiding the long-term dependency issues. 
 
 \section{Proposed LSTM model}
@@ -144,62 +145,94 @@ Just like the RNN, LSTM architecture is also formed as a chain structure. Differ
 	\caption{LSTM network preview}
 	\label{lstm} 
 \end{figure}
+Green boxes represent cells (or neurons) of the network. Since LSTM is recurrent network, both new input $ x_{t} $ and the output of previous cell $ h_{t-1} $ are fed to the current cell.
 
-An LSTM cell is consisted of 5 components which allow it to model both long-term and short-term data:
-\begin{itemize}
-	\item cell state
-	\item hidden state
-	\item input gate 
-	\item forget gate
-	\item output gate 
-\end{itemize}
-
+An LSTM cell is consisted of five components which allow it to model both long-term and short-term data: cell state at time $ t $ ($ C_{t} $); hidden state ($ \tilde{C}_{t}) $ ; input gate ($ i_{t} $); forget gate ($ f_{t} $) and output gate ($ o_{t} $).
 Cell state, presented with the upper horizontal line in Fig. \ref{lstm}, runs through the whole cell and is affected by some minor linear changes.
 
-Gates are the mechanism that allows information to be passed in selective fashion from the LSTM to the cell state. They consist of a sigmoid layer, which outputs value between 0 and 1 describing value of each component, and a multiplication operation.
+Gates are the mechanism that allows information to be passed in selective fashion from the LSTM to the cell state. They consist of a sigmoid layer, which outputs value between 0 and 1 describing value of each component and a multiplication operation.
 There are three types of gates in LSTM network:
 \begin{itemize}
-	\item {Forget gate} - determines which information to remove from the cell state $$ f_{t} = \sigma (W_{f} \cdot [h_{t-1}, x_{t}] + b_{f}) $$
-	\item {The second gate} - decides which new information should be written to the cell state. First, the sigmoid function decides which values to update and then the \emph{tanh} layer creates a vector of candidates to be added to the cell state. $$ i_{t} = \sigma (W_{i} \cdot [h_{t-1}, x_{t}] + b_{i}) $$ $$ C_{t} = tanh (W_{C} \cdot [h_{t-1}, x_{t}] + b_{C}) $$
-	\item {The output gate} - decides what is going to be output of the concrete cell. The output is based on the filtered version of the cell state. $$ o_{t} = \theta (W_{o} [h_{t-1}, x_{t}] + b_{o}) $$ $$ h_{t} = o_{t} * tanh(C_{t})$$
+	\item {Forget gate} - determines which information to remove from the cell state using sigmoid function that outputs value between 0 (completely reject) and 1 (completely accept)
+		$$ f_{t} = \sigma (W_{f} \cdot [h_{t-1}, x_{t}] + b_{f}) $$
+		where
+		\begin{itemize}
+			\item[] $ x_{t} $ is current input vector,
+			\item[] $ h_{t-1} $ is previous cell's output value,
+			\item[] $ W_{f} $ is associated weight,
+			\item[] $ b_{f} $ is added bias.
+		\end{itemize}
+	\item {The second gate} - decides what new information should be written to the cell state. 
+	
+	Firstly, the sigmoid function decides which value to update:
+	$$ i_{t} = \sigma (W_{i} \cdot [h_{t-1}, x_{t}] + b_{i}) $$ 
+	where
+	\begin{itemize}
+		\item[] $ x_{t} $ is current input vector,
+		\item[] $ h_{t-1} $ is previous cell's output value,
+		\item[] $ W_{i} $ is associated weight,
+		\item[] $ b_{i} $ is added bias.
+	\end{itemize}
+
+	After that, the \emph{tanh} layer creates a vector of candidates to be added to the cell state. 
+	$$ \tilde{C}_{t} = tanh (W_{C} \cdot [h_{t-1}, x_{t}] + b_{C}) $$
+	where
+	\begin{itemize}
+		\item[] $ x_{t} $ is current input vector,
+		\item[] $ h_{t-1} $ is previous cell's output value,
+		\item[] $ W_{C} $ is associated weight,
+		\item[] $ b_{C} $ is added bias.
+	\end{itemize}
+	\item {The output gate} - decides what is going to be output of the concrete cell. 
+	$$ o_{t} = \theta (W_{o} [h_{t-1}, x_{t}] + b_{o}) $$ 
+	where
+	\begin{itemize}
+		\item[] $ x_{t} $ is current input vector,
+		\item[] $ h_{t-1} $ is previous cell's output value,
+		\item[] $ W_{o} $ is associated weight,
+		\item[] $ b_{o} $ is added bias.
+	\end{itemize}
+	
+	The output is based on the filtered version of the cell state.
+	$$ h_{t} = o_{t} * tanh(C_{t})$$
+	where 
+	$ C_{t} $ is the new cell state calclulated as:
+	$ C_{t} = f_{t} * C_{t-1} + i_{t} * \tilde{C}_{t} $
 \end{itemize}
 
-In this case, concrete LSTM model for predicting time series data was developed using Keras, open source neural network library written in Python which is capable of running on top of TensorFlow. Model consists of 4 layers where each layer has 50 neurons which structure was described in Fig. \ref{lstm}. 
-The main idea was that the LSTM model successfully predicts when will transmission of observed device happend. 
+In this case, concrete LSTM model for predicting time series data was developed using Keras, open source neural network library written in Python which is capable of running on top of TensorFlow. 
+Model consists of 4 LSTM layers where first two layers are consisted of 128 neurons, third layer has 10 neurons and fourth layer, output layer, is consisted of only 1 neuron.
+Additional dropout and normalization layers are added after each LSTM layer except the output layer.  
+The main idea was that the LSTM model successfully predicts when will transmission of the observed device happend. 
 After the model had been built, network was fed using data consisting out of sequential time points with joined 0 or 1 depending on the success of transmission of LoRa message for that moment.
-Before actual load of the data, some preprocessing is required.
+Before the actual load of the data, some preprocessing is required.
 The way LSTM layers work is by taking in an array of 3 dimensions (N, W, F) where N is the number of training sequences, W is the sequnce length and F is the number of features of each sequence. 
 Sequnce length can be treated as hyperparameter whose value will affect (posibbly improve) overall quality of the model. Sequnce number is, in this case, arbitrary sized window which gives network the ability to detailly observe the data and learn how to build up a pattern of sequences based on the received sequental data.  
 The sequnces are constructed as sliding windows shifted by 1 after every iteration. 
 Number of feature is in this case one since its purpose is just define activity of the specific device. 
 
-The model is built by having a potential to predict single time point in the future or to predict a full sequnce (error prone). This overview is covering prediction in point-by-point way.
+The model is built by having a potential to predict single time point in the future or to predict a full sequnce (error prone).
 
 \section{Results}
 
 After only one training epoch results were starting to look promising. 
 Training was performed on 80 percent of data, where 20 percent of the data was left for testing and evaluation.
-On the Fig. \ref{lstm-out}, blue lines are representing actual device activity while the red triangles are predicting, based on historical events, when the actual events should happend. RMSE score for testing data is 0.1.
+On the Fig. \ref{lstm-out}, blue lines are representing actual device activity while the red triangles are predicting, based on historical events, when the actual events should happend. 
 On the x-axis each point is representing one second in the future where 0 second is presenting current moment, on the y-axis there can only be 1 or 0, for device will be active in the specific second or it won't be active in the specific second in the future.
 \begin{figure}
 	\centering
 	\includegraphics[scale=.6]{images/lstm-out.png} % Figure image
-	\caption{LSTM output}
+	\caption{Processed LSTM output is represented with red triangles which estimate moments in which observed device is active (y=1) or not active (y=0) while blue lines represent actual device activation }
 	\label{lstm-out} 
 \end{figure}
 
-The core idea of this project is to assess the probability that device will be active for given time period in the future. 
-With results shown on Fig. \ref{lstm-out} there is a simple way to do probability estimation, shown on Fig. \ref{est-prob}:
-$$ \mathbb{P}[N_{t} = k | X_{P}] = \mathbb{E}[\mathbb{P}[N_{t} = k | X_{s}]] $$
-where left side is overall estimated probability considering whole data set and right side is expected value when all subsamples are taken into account.
-$$ \mathbb{P}[N_{t} = k | X_{s}] =  \frac{1}{s-t}  \sum_{i=0}^{s-t}\mathbbm{1}[\sum_{j=0}^{t}X[i+j]=k] $$
+The core idea of this project is to assess the probability that device will be active for given time period in the future.
+$$ \mathbb{P}[N_{t} = k | X] =  \frac{1}{s-t}  \sum_{i=0}^{s-t}\mathbbm{1}[\sum_{j=0}^{t}X[i+j]=k] $$
 Estimation of successful transmission of the message for specific LoRa device for the observed subsample is shown in the equation above.
 \begin{itemize}
 	\item First, for the $ t $ number of seconds we want to define estimate of probability, we count how many times device was active.
 	\item The same process is applied on the next $ t $ seconds in subsample where next $ t $ seconds represent time window moved by 1 second in the direction of x-axis.
 	\item When the count for the whole sample is finished, we divide the number of device activations and number of seconds of sample $ s $. 
-	\item Lastly, probability estimation (if the time invariance is assumed) is avereged value from samples for the specific window size.
-	\item In addition, final result can be represented as quality of LSTM model times probability estimate: $ \mathbb{P}_{t} = (1-RMSE) \times \mathbb{P}[N_{t} = k | X_{s}] $ 
 \end{itemize} 
 As window size (number of seconds for which we want to estimate probability of activation) rises so does the probability of activation. Finally, for the window size equals to sample size, probability should be 1 in most cases. 
 Probability distribution is shown on Fig. \ref{est-prob}.
