@@ -3,7 +3,9 @@ from itertools import islice
 import numpy as np
 
 def sampling(data, sample_size):
-    """Returns sampled data sets"""
+    """Returns sampled data sets
+        Not applicable for non-stationary data
+    """
     return [data[x:x+sample_size] for x in range(0, len(data), sample_size)] 
 
 def gen_window(seq, n):
@@ -48,8 +50,6 @@ def main():
     data = [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0]
     plot_data(data)
-
-    _ = sampling(data, sample_size=10)
 
     probs_acc = []
     max_w_size = 15
