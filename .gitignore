@@ -113,3 +113,15 @@ data/processed/*.m
 
 # numpy stuff
 *.npy
+
+# latex stuff
+*.sty 
+*.aux
+*.fdb_latexmk
+*.fls 
+*.log
+*.nav 
+*.out 
+*.snm 
+*.synctex.gz 
+*.toc
