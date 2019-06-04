@@ -125,3 +125,4 @@ data/processed/*.m
 *.snm 
 *.synctex.gz 
 *.toc
+*.vrb
