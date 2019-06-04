@@ -4,6 +4,7 @@
 \usepackage{graphicx}
 \usepackage{appendixnumberbeamer}
 \usepackage{booktabs}
+\usepackage{bbm}
 \usepackage[scale=2]{ccicons}
 \usepackage{pgfplots}
 \usepgfplotslibrary{dateplot}
@@ -134,17 +135,141 @@
     \begin{center}
       \textbf{new weight = weight - learning rate * gradient}
 
-      gradient $\rightarrow$ 0 $\Rightarrow$ new weight $\rightarrow$ 0 $\Rightarrow$ RNN stops learning 
+      gradient = 0 $\rightarrow$ new weight = weight $\rightarrow$ RNN stops learning 
     \end{center}
   \end{frame}
 
   \begin{frame}{LSTM networks to the rescue}
+    Changing the inner structure of a cell made possible that the flow of information is regulated.
 
+    Inside each LSTM cells there are mechanisms called \alert{gates} that can learn which data in a sequence is important to keep or throw away.
+  \end{frame}
+  \begin{frame}
+    \begin{figure}[]
+      \centering
+      \includegraphics[width=\linewidth]{images/LSTM.png}
+    \end{figure}
+  \end{frame}
+
+  \begin{frame}{Forget gate}  
+    Determines which information to remove from the cell state using sigmoid function that outputs value between 0 (completely reject) and 1 (completely accept)
+		$$ f_{t} = \sigma (W_{f} \cdot [h_{t-1}, x_{t}] + b_{f}) $$
+		where
+		\begin{itemize}
+			\item[] $ x_{t} $ is current input vector,
+			\item[] $ h_{t-1} $ is previous cell's output value,
+			\item[] $ W_{f} $ is associated weight,
+			\item[] $ b_{f} $ is added bias.
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Input gate}
+    Decides what new information should be written to the cell state. 
+    
+    Firstly, the sigmoid function decides which value to update:
+    $$ i_{t} = \sigma (W_{i} \cdot [h_{t-1}, x_{t}] + b_{i}) $$ 
+    where
+    \begin{itemize}
+      \item[] $ x_{t} $ is current input vector,
+      \item[] $ h_{t-1} $ is previous cell's output value,
+      \item[] $ W_{i} $ is associated weight,
+      \item[] $ b_{i} $ is added bias.
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Cell state}
+    ...after that, \textit{tanh} layer creates vector of candidates for the cell state:
+    $$ \tilde{C}_{t} = tanh (W_{C} \cdot [h_{t-1}, x_{t}] + b_{C}) $$
+    where
+    \begin{itemize}
+      \item[] $ x_{t} $ is current input vector,
+      \item[] $ h_{t-1} $ is previous cell's output value,
+      \item[] $ W_{C} $ is associated weight,
+      \item[] $ b_{C} $ is added bias.
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Output gate}
+    Decides what is going to be output of the concrete cell. 
+    $$ o_{t} = \sigma (W_{o} [h_{t-1}, x_{t}] + b_{o}) $$ 
+    where
+    \begin{itemize}
+      \item[] $ x_{t} $ is current input vector,
+      \item[] $ h_{t-1} $ is previous cell's output value,
+      \item[] $ W_{o} $ is associated weight,
+      \item[] $ b_{o} $ is added bias.
+    \end{itemize}
+    
+    The output is based on the filtered version of the cell state.
+    $$ h_{t} = o_{t} * tanh(C_{t})$$
+    where 
+    $ C_{t} $ is the new cell state calclulated as:
+    $ C_{t} = f_{t} * C_{t-1} + i_{t} * \tilde{C}_{t} $
   \end{frame}
 
   \section{Model configuration}
+  \begin{frame}{Configuration}
+    \begin{itemize}
+      \item loss: MSE 
+      \item optimizer: ADAM
+      \item layers: 3 LSTM (CuDNN implementation)
+      \item droput layer with rate of 0.2 after each LSTM layer
+      \item batch normalization layer after first two dropouts
+      \item last dense layer with only 1 layer has ReLu activation
+    \end{itemize}
+  \end{frame}
 
   \section{Probability of device activation for future time period}
+  \begin{frame}{Preprocessing}
+    \begin{enumerate}
+      \item cleansing
+      \item clean structured data $\rightarrow$ time-series data
+      \item creating sequences
+      \item randomizing sequnces  
+      \item train-validation split
+    \end{enumerate}
+  \end{frame}
+
+  \begin{frame}[fragile]{Training}
+    In-memory training:
+    \begin{itemize}
+      \item 10 epochs
+      \item 64 batch size
+    \end{itemize}
+    using 
+    \begin{verbatim}
+callbacks = [
+    EarlyStopping(...),
+    ModelCheckpoint(...),
+    TensorBoard(...)
+    ]  
+    \end{verbatim}
+  \end{frame}
+
+  \begin{frame}{Validation results}
+    \begin{figure}[]
+      \centering
+      \includegraphics[width=\linewidth]{images/lstm-out.png}
+    \end{figure}
+  \end{frame}
+
+  \begin{frame}{Probability of successful transmission}
+    For given period of time (\textbf{n} seconds) probability of successful transimission of LoRa uplink message should rise up as time period gets bigger (\textbf{n} gets bigger). 
+    $$ n = 0 \Rightarrow p_{st} = 0 $$ 
+    $$ n \in <0, +\infty> \Rightarrow p_{st} \in <0, 1> $$
+    $$ n = \infty \Rightarrow p_{st} = 1 $$
+
+    Probability can be calclulated as: 
+    $$ \mathbb{P}[N_{t} = k | X] =  \frac{1}{s-t}  \sum_{i=0}^{s-t}\mathbbm{1}[\sum_{j=0}^{t}X[i+j]=k] $$
+  \end{frame}
+
+  \begin{frame}
+    \begin{figure}[]
+      \centering
+      \includegraphics[width=\linewidth]{images/est-prob.png}
+    \end{figure}
+  \end{frame}
+
 
   \section{Conclusion}
   \begin{frame}{Future work}
