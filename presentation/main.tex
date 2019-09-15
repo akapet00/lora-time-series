@@ -13,32 +13,33 @@
 
 \usetheme{metropolis}
 
-\title{Probability of Successful Transmission of Uplink Messages in LoRaWAN}
+\title{Rudarenje podataka LoRaWAN mreže}
 %\subtitle{}
 \date{\today}
 \author{Ante Lojić Kapetanović}
-\institute{Department of Electronic Systems @AAU}
+\institute{FESB, Sveučilište u Splitu}
 
 \begin{document}
 
   \maketitle
 
-  \begin{frame}{Content}
+  \begin{frame}{Sadržaj}
     \setbeamertemplate{section in toc}[sections numbered]
     \tableofcontents[hideallsubsections]
   \end{frame}
 
-  \section{Introduction}
-  \begin{frame}[fragile]{LoRaWAN}
-    \alert{Long Range Wide Area Network} - low power, wide area media access protocol built on top of LoRa designed to wirelesslly connect \textit{things} to the Internet.
-
-    Perfect fit for network of IoT devices that:
+  \section{Uvod i motivacija}
+  \begin{frame}[fragile]{LoRaWAN - Long Range Wide Area Network}
+    \alert{LoRaWAN} - dalekosežna mreža širokog područja definirana je kao protokol kontrole pristupa mediju (MAC) za mreže širokog područja (WAN).
+    
+    Dizajnirana je tako da zadovoljava ključna svojstva uređaja u IoT mreži:
     \begin{itemize}
-      \item are not power hungry
-      \item require minimum bandwidth
-      \item send data not to often
+      \item dalekosežno povezivanje
+      \item skalabilnost
+      \item energetska učinkovitost
     \end{itemize}
   \end{frame}
+  
   \begin{frame}[fragile]
     \begin{center}
       \begin{figure}
@@ -47,34 +48,38 @@
     \end{center}
   \end{frame}
 
-  \begin{frame}{Infrastructure overview}
+  \begin{frame}{Arhitekturni pregled mreže}
     \begin{figure}
       \includegraphics[width=\linewidth]{images/LoRaWAN-Network-Layout.png}
     \end{figure}
   \end{frame}
 
-  \begin{frame}{Svebølle topology}
+  \begin{frame}{Svebølle mrežna topologija}
     \begin{figure}
       \includegraphics[width=0.48\linewidth]{images/Svebolle-Topology.png}
     \end{figure}
   \end{frame}
 
-  \begin{frame}{Communication model for Svebølle deployment}
+  \begin{frame}{Komunikacijski model za Svebølle implementaciju}
     \begin{figure}
       \includegraphics[width=\linewidth]{images/Svebolle-ed-bs-model.png}
     \end{figure}
   \end{frame}
 
-  \begin{frame}{Project goal}
-    Is to apply forecasting methods on measured data from the single base station in Svebølle and examine whether there is a possibility of predicting \alert{successful transmission of LoRa messages for given future time interval}.
+  \begin{frame}{Cilj projekta}
+    Je primjena prediktivnih statističkih metoda na mjerene podatke sa bazne stanice u Svebølleu i ispitivanje mogućnosti predviđanja \alert{uspješno transmitiranih LoRa poruka za dani interval vremena u budućnosti}.
   \end{frame}
 
-  \section{Predicting future events}
-  \begin{frame}{Structure of the measurement data}
+  \begin{frame}{Motivacija}
+    Uspješnom predikcijom aktivnosti krajnjih uređaja za blisku budućnost osigurao bi se prostor definiranju učinkovitijih pristupnih protokola što bi posljedično rezultiralo boljom mrežnom propusnošćuu i pouzdanošću same mreže ali i energetskom efikasnošću.
+  \end{frame}
+
+  \section{Prediktivne metode}
+  \begin{frame}{Struktura mjerenih podataka}
     \begin{itemize}
-      \item Data was collected during the period of nearly 5 months
-      \item 689k measurements are captured on a single base station
-      \item Measured features\begin{itemize}
+      \item Podaci su prikupljeni kroz 5 mjeseci
+      \item 689k mjerenja su snimljene na jednoj baznoj stanici
+      \item Mjerene značajke\begin{itemize}
         \item Time
         \item DevAddr
         \item Freq, Chan, BW, CR, DR 
@@ -84,17 +89,18 @@
     \end{itemize}
   \end{frame}
 
-  \begin{frame}{Transformation to time-series}
-    \alert{Time-series} data is a series of data points indexed in time order and taken at successive equally spaced points in time.
+  \begin{frame}{Transformacija snimljenih podataka u vremensku seriju}
+    \alert{Vremenska serija} je niz sukcesivno raspoređenih elemenata indeksiranih u vremenskom redoslijedu pri čemu su elementi vremenski jednako razmaknuti.
 
-    To create time series data from given data set, the only important label is wheter the end device has successfully transmitted the message or not. For each time point, where every time point is observation in seconds there is activity flag assigned:
+    Kako bismo kreirali vremensku seriju, jedina bitna značajka podatkovnog seta je aktivnost uređaja u promatranom prošlom trenutku.
+    Za svaki trenutak, gdje je trenutak u rezoluciji sekunde, zastavica aktivnosti je dodijeljenja na način:
     \begin{itemize}
-      \item 1 - device was active for observed time point
-      \item 0 - device was not active for observed time point
+      \item 1 - uređaj je bio aktivan u promatranom trenutak
+      \item 0 - uređaj nije bio aktivan u promatranom trenutku
     \end{itemize}
   \end{frame}
 
-  \begin{frame}{Prediction models}
+  \begin{frame}{Prediktivni modeli}
     \begin{itemize}
       \item Moving average / weighted moving average
       \item Autoregressive integrated moving average (ARIMA)
@@ -105,17 +111,17 @@
     \end{itemize}
   \end{frame}
 
-  \section{Proposed RNN model}
-  \begin{frame}{Artifical neural network}
-    Recognizing regularities and patterns of the given data, learning from past experience and providing inference on the output.
+  \section{Predloženi RNN model}
+  \begin{frame}{Umjetna neuralna mreža}
+    Prepoznaju regularnosti i uzorke promatranog seta podataka, uče iz prošlog iskustva i osiguravaju mogućnost zaključivanja na temelju izlaznih podataka.
 
-    Vanilla ANNs are not perfectly suitable for time-series forecasting because they lack persistance.
+    Jednostavne neuralne mreže nisu namjenjene za prognoziranje vremenskih serija jer su limitirane s mogućnošću pamćenja historijskih podataka.
   \end{frame}
 
-  \begin{frame}{Reccurent neural network}
+  \begin{frame}{RNN mreža (Reccurent Neural Network)}
     \begin{columns}
       \column{.5\textwidth}
-        RNNs contain loops (feedbacks) allowing information to persist.
+        RNN sadrži petlje (povratne veze) koje osiguravaju ustrajnost informacije.
       \column{.5\textwidth}
       \begin{figure}[]
         \centering
@@ -123,26 +129,27 @@
       \end{figure}
     \end{columns}
   \end{frame}
-  \begin{frame}{Unpacked RNN}
+  \begin{frame}{Raspakirana RNN mreža}
     \begin{figure}[]
       \centering
       \includegraphics[width=\linewidth]{images/RNN-unpacked.png}
     \end{figure}
   \end{frame}
-  \begin{frame}{Short-term memory problem}
-    If a sequence is long enough, RNN will have a hard time carrying information from earlier time steps to later ones.
-    The reason is that during back propagation, RNNs suffer from the vanishing gradient problem (gradient shrinks during back propagation time).
-    \begin{center}
-      \textbf{new weight = weight - learning rate * gradient}
+  \begin{frame}{Problem kratkoročne memorije}
+    Ako je sekvenca podataka preduga, RNN mreža će imati problem pri prenošenju informacija iz historijskih momenata u kasnije momente.
+    Razlog je jer tijekom povratne propagacije (\textit{back propagation}), RNN mreže pate od problema nestajućeg gradijenta (gradijent se smanjuje tijekom vremena povratne propagacije).
 
-      gradient = 0 $\rightarrow$ new weight = weight $\rightarrow$ RNN stops learning 
+    \begin{center}
+      \textbf{nova težina = težina - stopa učenja $\times$ gradijent}
+
+      gradijent = 0 $\rightarrow$ nova težina = težina $\rightarrow$ RNN mreža prestaje učiti 
     \end{center}
   \end{frame}
 
-  \begin{frame}{LSTM networks to the rescue}
-    Changing the inner structure of a cell made possible that the flow of information is regulated.
+  \begin{frame}{LSTM mreže (Long Short-Term Memory) u pomoć!}
+    Promjena unutrašnje strukture RNN ćelije osigura se regulacija protočnosti informacije.
 
-    Inside each LSTM cells there are mechanisms called \alert{gates} that can learn which data in a sequence is important to keep or throw away.
+    Unutrašnjost svake LSTM ćelije je realizirana s mehanizmima zvanim \alert{vrata} koja kroz treniranje uče koji podaci sekvence su bitni a koji mogu biti odbačeni.
   \end{frame}
   \begin{frame}
     \begin{figure}[]
@@ -151,117 +158,102 @@
     \end{figure}
   \end{frame}
 
-  \begin{frame}{Forget gate}  
-    Determines which information to remove from the cell state using sigmoid function that outputs value between 0 (completely reject) and 1 (completely accept)
-		$$ f_{t} = \sigma (W_{f} \cdot [h_{t-1}, x_{t}] + b_{f}) $$
-		where
+  \begin{frame}{'Forget' vrata}  
+    određuju koju informaciju odbaciti iz \textit{stanja ćelije} koristeći sigmoidnu funkciju koja na izlazu daje rezultate između 0 (u potpunosti odbaciti) i 1 (u potpunosti prihvati)
+    $$ f_{t} = \sigma (W_{f} \cdot [h_{t-1}, x_{t}] + b_{f}) $$
+		gdje je
 		\begin{itemize}
-			\item[] $ x_{t} $ is current input vector,
-			\item[] $ h_{t-1} $ is previous cell's output value,
-			\item[] $ W_{f} $ is associated weight,
-			\item[] $ b_{f} $ is added bias.
+			\item[] $ x_{t} $ trenutni ulazni vektor podataka;
+			\item[] $ h_{t-1} $ prethodna vrijednosti izlaza ćelije;
+			\item[] $ W_{f} $ pridružena težinska vrijednost;
+			\item[] $ b_{f} $ je dodani \textit{bias}.
     \end{itemize}
   \end{frame}
 
-  \begin{frame}{Input gate}
-    Decides what new information should be written to the cell state. 
+  \begin{frame}{Ulazna vrata}
+    određuju koja nova informacija će biti upisana u \textit{stanje ćelije}.
     
-    Firstly, the sigmoid function decides which value to update:
+    Prvo, sigmoidna funkcija odlučuje koju vrijednost ažurirati:
     $$ i_{t} = \sigma (W_{i} \cdot [h_{t-1}, x_{t}] + b_{i}) $$ 
-    where
+    gdje je
     \begin{itemize}
-      \item[] $ x_{t} $ is current input vector,
-      \item[] $ h_{t-1} $ is previous cell's output value,
-      \item[] $ W_{i} $ is associated weight,
-      \item[] $ b_{i} $ is added bias.
+      \item[] $ x_{t} $ trenutni ulazni vektor podataka;
+      \item[] $ h_{t-1} $ prethodna vrijednosti izlaza ćelije;
+      \item[] $ W_{i} $ pridružena težinska vrijednost;
+      \item[] $ b_{i} $ je dodani \textit{bias}.
     \end{itemize}
   \end{frame}
 
-  \begin{frame}{Cell state}
-    ...after that, \textit{tanh} layer creates vector of candidates for the cell state:
+  \begin{frame}{Stanje ćelije}
+    ...nakon toga, \textit{tanh} sloj kreira vektor kandidata za trenutno stanje ćelije:
     $$ \tilde{C}_{t} = tanh (W_{C} \cdot [h_{t-1}, x_{t}] + b_{C}) $$
-    where
+    gdje je
     \begin{itemize}
-      \item[] $ x_{t} $ is current input vector,
-      \item[] $ h_{t-1} $ is previous cell's output value,
-      \item[] $ W_{C} $ is associated weight,
-      \item[] $ b_{C} $ is added bias.
+      \item[] $ x_{t} $ trenutni ulazni vektor podataka;
+      \item[] $ h_{t-1} $ prethodna vrijednosti izlaza ćelije;
+      \item[] $ W_{C} $ pridružena težinska vrijednost;
+      \item[] $ b_{C} $ je dodani \textit{bias}.
     \end{itemize}
   \end{frame}
 
-  \begin{frame}{Output gate}
-    Decides what is going to be output of the concrete cell. 
+  \begin{frame}{Izlazna vrata}
+    određuju što ide na izlaz promatrane ćelije.
     $$ o_{t} = \sigma (W_{o} [h_{t-1}, x_{t}] + b_{o}) $$ 
     where
     \begin{itemize}
-      \item[] $ x_{t} $ is current input vector,
-      \item[] $ h_{t-1} $ is previous cell's output value,
-      \item[] $ W_{o} $ is associated weight,
-      \item[] $ b_{o} $ is added bias.
+      \item[] $ x_{t} $ trenutni ulazni vektor podataka;
+      \item[] $ h_{t-1} $ prethodna vrijednosti izlaza ćelije;
+      \item[] $ W_{o} $ pridružena težinska vrijednost;
+      \item[] $ b_{o} $ je dodani \textit{bias}.
     \end{itemize}
     
-    The output is based on the filtered version of the cell state.
+    Izlaz je baziran na filtriranoj verziji \textit{stanja ćelije}.
     $$ h_{t} = o_{t} * tanh(C_{t})$$
-    where 
-    $ C_{t} $ is the new cell state calclulated as:
+    gdje je 
+    $ C_{t} $ novo stanje dobiveno kroz:
     $ C_{t} = f_{t} * C_{t-1} + i_{t} * \tilde{C}_{t} $
   \end{frame}
 
-  \section{Model configuration}
-  \begin{frame}{Configuration}
-    \begin{itemize}
-      \item loss: MSE 
-      \item optimizer: ADAM
-      \item layers: 3 LSTM (CuDNN implementation)
-      \item droput layer with rate of 0.2 after each LSTM layer
-      \item batch normalization layer after first two dropouts
-      \item last dense layer with only 1 layer has ReLu activation
-    \end{itemize}
-  \end{frame}
-
-  \section{Probability of device activation for future time period}
-  \begin{frame}{Preprocessing}
+  \section{Rezultati}
+  \begin{frame}{Predprocesiranje}
     \begin{enumerate}
-      \item cleansing
-      \item clean structured data $\rightarrow$ time-series data
-      \item creating sequences
-      \item randomizing sequnces  
-      \item train-validation split
+      \item čišćenje
+      \item čisti podatkovni set $\rightarrow$ vremenska serija
+      \item kreiranje sekvenca
+      \item randomiziranje sekvenca 
+      \item podjela podatkovnog seta na set za trening i set za validaciju rezultata
     \end{enumerate}
   \end{frame}
 
-  \begin{frame}[fragile]{Training}
-    In-memory training:
-    \begin{itemize}
-      \item 10 epochs
-      \item 64 batch size
-    \end{itemize}
-    using 
-    \begin{verbatim}
-callbacks = [
-    EarlyStopping(...),
-    ModelCheckpoint(...),
-    TensorBoard(...)
-    ]  
-    \end{verbatim}
-  \end{frame}
-
-  \begin{frame}{Validation results}
+  \begin{frame}{Validacijski rezultati}
     \begin{figure}[]
       \centering
       \includegraphics[width=\linewidth]{images/lstm-out.png}
     \end{figure}
   \end{frame}
 
-  \begin{frame}{Probability of successful transmission}
-    For given period of time (\textbf{n} seconds) probability of successful transimission of LoRa uplink message should rise up as time period gets bigger (\textbf{n} gets bigger). 
+  \begin{frame}{Pogreške}
+    \begin{figure}[]
+      \centering
+      \includegraphics[width=\linewidth]{images/err.png}
+    \end{figure}
+  \end{frame}
+
+  \begin{frame}{Validacija rezultata}
+    \begin{figure}[]
+      \centering
+      \includegraphics[width=\linewidth]{images/err_con.png}
+    \end{figure}
+    Za MAE=2s, 0.35\% pogrešnih predikcija.
+  \end{frame}
+
+  \begin{frame}{Procjena vjerojatnosti transmisije za proizvoljni budući vremenski period}
+    Za dani vremenski period (\textbf{n} sekunda) vjerojatnost uspješne transmisije LoRa poruke s krajnjeg uređaja na baznu stanicu bi trebala rasti kako se povećava vremenski period (\textbf{n} postaje veći). 
     $$ n = 0 \Rightarrow p_{st} = 0 $$ 
     $$ n \in <0, +\infty> \Rightarrow p_{st} \in <0, 1> $$
     $$ n = \infty \Rightarrow p_{st} = 1 $$
 
-    Probability can be calclulated as: 
-    $$ \mathbb{P}[N_{t} = k | X] =  \frac{1}{s-t}  \sum_{i=0}^{s-t}\mathbbm{1}[\sum_{j=0}^{t}X[i+j]=k] $$
-  \end{frame}
+    \end{frame}
 
   \begin{frame}
     \begin{figure}[]
@@ -271,17 +263,17 @@ callbacks = [
   \end{frame}
 
 
-  \section{Conclusion}
-  \begin{frame}{Future work}
+  \section{Zaključak}
+  \begin{frame}{Budući rad}
     \begin{itemize}
-      \item \textbf{Multivariate time-series data} instead of univariate time-series data: observe not only previous historical events for specific device but also activation of other devices
-      \item \textbf{Longer training sequences}
-      \item Future \textbf{sequence predictions} instead of point-to-point predictions
+      \item \textbf{Multivarijatna vremenska serija} umjesto jednostavne vremenske serije: promatrati ne samo prethodne historijske događaje za specifični uređaj nego i za ostale uređaje
+      \item \textbf{Veće sekvence za treniranje modela}
+      \item \textbf{Sekvencne predikcije} umjesto od-točke-do-toče predikcije
     \end{itemize}
   \end{frame}
 
   \begin{frame}[standout]
-    Questions?
+    Pitanja
   \end{frame}
 
   
