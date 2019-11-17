@@ -1,6 +1,10 @@
 import matplotlib.pyplot as plt
+from matplotlib import style
+style.use('ggplot')
 from itertools import islice
 import numpy as np
+from scipy.interpolate import interp1d
+import time 
 
 def sampling(data, sample_size):
     """Returns sampled data sets
@@ -33,6 +37,18 @@ def estimate_prob(data, window_size):
         window_prob.append(ones_freq/window_size)
     return 1 - window_prob.count(0.0)/len(window_prob)
 
+def estimate_prob_vectorised(data, window_size):
+    """Returns a probability estimate for given numpy array of 
+       samples in n=window_size number of seconds"""
+    windows = gen_window(data, n=window_size)
+
+    window_prob = []
+
+    for window in windows:
+        window_prob.append(np.sum(window)/window_size)
+    return 1 - window_prob.count(0.0)/len(window_prob)
+    
+
 def plot_data(data):
     fig = plt.figure(facecolor='white', figsize=(12,3))
     plt.plot(range(len(data)), data, 'b-.o')
@@ -41,25 +57,52 @@ def plot_data(data):
     plt.show()
 
 def plot_prob(probs, time_points):
-    plt.plot(range(1, time_points), probs)
+    f_interp1d = interp1d(time_points, probs)
+    xnew = np.arange(min(time_points), max(time_points), step=max(time_points)/1000)
+    ynew = f_interp1d(xnew)
+
+    plt.plot(time_points, probs, 'o', xnew, ynew, '-')
+    plt.legend(['calculated', 'interpolation'], loc='best')
+    plt.xscale('log')
     plt.xlabel('time [s]')
-    plt.ylabel('probability')
+    plt.ylabel('CDF')
     plt.show()
 
 def main():
-    data = [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0]
-    plot_data(data)
+    
+    data = np.ones(100000)
+    data[:99900] = 0
+    np.random.shuffle(data)
+    print('data generated\n')
+    #plot_data(data)
 
+    max_w_size = [1, 100, 1000, 3000, 10000, 30000, 90000]
+  
+    # vectorised
     probs_acc = []
-    max_w_size = 15
-    for w in range(1, max_w_size):
+    start = time.time()
+
+    for w in max_w_size:
+        probs = estimate_prob_vectorised(data, window_size=w)
+        probs_acc.append(probs)
+    
+    print(f'vectorised time: {time.time() - start}s')
+
+    for i, j in zip(max_w_size, probs_acc):
+        print(f'for window size {i} estimated probability is {j}')
+
+    # non vectorised
+    probs_acc = []
+    start = time.time()
+
+    for w in max_w_size:
         probs = estimate_prob(data, window_size=w)
         probs_acc.append(probs)
+    
+    print(f'\n\nnon vectorised time: {time.time() - start}s')
 
-    for idx, val in enumerate(probs_acc):
-        print('for window size', idx+1,
-                'estimated probability is', val)
+    for i, j in zip(max_w_size, probs_acc):
+        print(f'for window size {i} estimated probability is {j}')
 
     plot_prob(probs_acc, max_w_size)
    
